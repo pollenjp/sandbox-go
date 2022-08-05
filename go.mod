@@ -1,4 +1,4 @@
-module github.com/pollenjp/sandbox-go/2022-08-03-140501/sample
+module github.com/pollenjp/sandbox-go
 
 go 1.18
 
