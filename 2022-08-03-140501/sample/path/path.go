@@ -29,6 +29,11 @@ func (p Path) Ext() string {
 	return filepath.Ext(p.Filepath)
 }
 
+// Join
+func (p Path) Join(child string) Path {
+	return Path{Filepath: filepath.Join(child)}
+}
+
 // filename exclude the extension
 func (p Path) Parent() Path {
 	return Path{Filepath: filepath.Dir(p.Filepath)}
