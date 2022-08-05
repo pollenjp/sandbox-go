@@ -18,4 +18,10 @@ func TestMain(t *testing.T) {
 		}
 		assert.Equal(t, samplePath.Abs().Filepath, absPathStr)
 	})
+
+	t.Run("Join", func(t *testing.T) {
+		dirPathStr := filepath.Dir(samplePathStr)
+		fname := "hello.txt"
+		assert.Equal(t, Path{Filepath: dirPathStr}.Join(fname).Filepath, filepath.Join(dirPathStr, fname))
+	})
 }
