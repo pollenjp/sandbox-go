@@ -2,33 +2,10 @@ package main
 
 import (
 	"fmt"
-	"path/filepath"
 	"runtime"
+
+	"github.com/pollenjp/sandbox-go/2022-08-03-140501/sample/path"
 )
-
-type Path struct {
-	Filepath string
-}
-
-// filepath's basename
-func (p Path) Base() string {
-	return filepath.Base(p.Filepath)
-}
-
-// filename の拡張子を取得する
-func (p Path) Ext() string {
-	return filepath.Ext(p.Filepath)
-}
-
-// filename exclude the extension
-func (p Path) Stem() string {
-	basename := p.Base()
-	return basename[:len(basename)-len(p.Ext())]
-}
-
-func (p Path) String() string {
-	return p.Filepath
-}
 
 func main() {
 	fmt.Println("Hello, world!")
@@ -39,7 +16,7 @@ func main() {
 	fmt.Printf("Called from %s, line #%d, func: %v\n",
 		file, line, runtime.FuncForPC(pc).Name())
 
-	fpath := Path{Filepath: file}
+	fpath := path.Path{Filepath: file}
 
 	fmt.Println(fpath)
 	fmt.Println(fpath.Base())
