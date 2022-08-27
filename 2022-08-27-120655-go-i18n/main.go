@@ -22,7 +22,7 @@ func initI18n() {
 
 	type i18nTemplate struct {
 		lang string
-		msg map[string]any
+		msg  map[string]any
 	}
 
 	templates := []i18nTemplate{
@@ -31,19 +31,31 @@ func initI18n() {
 			map[string]any{
 				"MSG002": "Hello, world! (2)",
 				"MSG003": "Hello, world! (3)",
+				"MSG004": map[string]any{
+					"description": "desc",
+					"one":         "{{ .Hello }} {{ .PluralCount }} one",
+					"other":       "{{ .Hello }} {{ .PluralCount }} other",
+				},
 			},
 		},
 		{
 			"ja",
 			map[string]any{
-				"MSG002": "Hello, world! (2)",
-				"MSG003": "Hello, world! (3)",
+				"MSG002": "JP: Hello, world! (2)",
+				"MSG003": "JP: Hello, world! (3)",
+				"MSG004": map[string]any{
+					"description": "JP: desc",
+					"zero":        "JP: {{ .Hello }} zero",
+					"one":         "JP: {{ .Hello }} one",
+					"other":       "JP: {{ .Hello }} other",
+				},
 			},
 		},
 	}
 	parse := func(t i18nTemplate) {
 		if msg, err := json.Marshal(t.msg); err == nil {
-			bundle.MustParseMessageFileBytes(msg, t.lang + ".json")
+			fmt.Println(string(msg))
+			bundle.MustParseMessageFileBytes(msg, t.lang+".json")
 		}
 	}
 
@@ -85,9 +97,40 @@ func initI18n() {
 }
 
 func main() {
+	fmt.Printf("%v\n", bundle)
+	fmt.Printf("%s\n", language.English)
+	fmt.Printf("%s\n", language.Japanese)
 	{
-		localizer := i18n.NewLocalizer(bundle, "ja-JP")
+		localizer := i18n.NewLocalizer(bundle, language.Japanese.String())
 		fmt.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "MSG002"}))
 		fmt.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "MSG003"}))
+		tmp := i18n.LocalizeConfig{
+			MessageID: "MSG004",
+			TemplateData: map[string]interface{}{
+				"Hello": "HELLO",
+			},
+			PluralCount: 1,
+		}
+		fmt.Printf("%v\n", tmp)
+		fmt.Printf("%v\n", tmp.PluralCount)
+		fmt.Println(localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "MSG004",
+			TemplateData: map[string]interface{}{
+				"Hello": "HELLO",
+			},
+			PluralCount: 0, // 日本語は対象言語ではない
+		}))
+	}
+	{
+		localizer := i18n.NewLocalizer(bundle, language.English.String())
+		cnt := 1
+		fmt.Println(localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "MSG004",
+			TemplateData: map[string]interface{}{
+				"Hello":       "HELLO",
+				"PluralCount": fmt.Sprint(cnt),
+			},
+			PluralCount: cnt,
+		}))
 	}
 }
